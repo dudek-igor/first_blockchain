@@ -1,25 +1,15 @@
-const SHA256 = require("crypto-js/sha256");
+const Block = require("./Block");
+const blockchain = require("./Blockchain");
 
-class Block {
-  /**
-   * @param {} index optionals / tell us where the block sits on
-   * @param {Date} timestamp tell us when block is created
-   * @param {Object} data any type of data that we want to associate
-   * @param {string} previousHash hash of block before
-   */
-  constructor(index, timestamp, data, previousHash = "") {
-    this.index = index;
-    this.timestamp = timestamp;
-    this.data = data;
-    this.previousHash = previousHash;
-    this.hash = calculateHash();
-  }
-  calculateHash() {
-    return SHA256(
-      this.index +
-        this.previousHash +
-        this.timestamp +
-        JSON.stringify(this.data)
-    ).toString();
-  }
-}
+blockchain.addBlock(new Block(1, Date.now(), { amount: 10 }));
+blockchain.addBlock(new Block(2, Date.now(), { amount: 23 }));
+
+console.log(JSON.stringify(blockchain, null, 4));
+
+console.log(`Is blockchain valid? ${blockchain.isChainValid()}`);
+
+// Mute Block
+blockchain.chain[1].data = { amount: 100 };
+blockchain.chain[1].hash = blockchain.chain[1].calculateHash();
+
+console.log(`Is blockchain valid? ${blockchain.isChainValid()}`);
